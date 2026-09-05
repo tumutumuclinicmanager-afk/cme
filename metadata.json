@@ -1,0 +1,6 @@
+{
+  "name": "CME Kenya",
+  "description": "Continuous medical education platform with multimedia clinical presentations, embedded videos, high-resolution imaging, interactive post-module quizzes, offline downloads, administrator analytics, and M-Pesa payments in English and French.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
