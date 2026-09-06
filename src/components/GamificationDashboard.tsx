@@ -103,8 +103,8 @@ export const GamificationDashboard: React.FC<GamificationDashboardProps> = ({
       <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-slate-100">
         {/* Clinician Tier Level Card */}
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center shadow-md shrink-0">
-            <Trophy className="w-7 h-7" />
+          <div className="w-14 h-14 rounded-2xl bg-blue-950 text-white flex items-center justify-center shadow-xs shrink-0">
+            <Trophy className="w-7 h-7 text-amber-400" />
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ export const GamificationDashboard: React.FC<GamificationDashboardProps> = ({
                 {points} CME Points
               </span>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-slate-900">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900">
               {profile.name}
             </h3>
             <p className="text-xs text-slate-500">
@@ -134,7 +134,7 @@ export const GamificationDashboard: React.FC<GamificationDashboardProps> = ({
           </div>
           <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
             <div
-              className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-500"
+              className="h-full bg-blue-600 rounded-full transition-all duration-300"
               style={{ width: `${tierProgress}%` }}
             />
           </div>

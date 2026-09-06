@@ -710,7 +710,7 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
           className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6 text-slate-700 text-xs sm:text-sm"
         >
           {/* Quick Banner: Want to import PPT instead? */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-orange-50/90 via-blue-50/50 to-indigo-50/40 border border-orange-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
                 P

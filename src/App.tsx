@@ -652,10 +652,10 @@ export default function App() {
             />
 
             {/* Freemium Notice Banner */}
-            <div className="bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-700 text-white rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="bg-blue-950 text-white rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-blue-900">
               <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center shrink-0 shadow-inner">
-                  <Sparkles className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shrink-0">
+                  <Sparkles className="w-5 h-5 text-amber-400" />
                 </div>
                 <div>
                   <span className="font-bold text-white block text-sm sm:text-base">
@@ -663,14 +663,14 @@ export default function App() {
                       ? 'Accès Libre : Les 3 premières présentations sont gratuites'
                       : 'Freemium Access: First 3 presentations are 100% free'}
                   </span>
-                  <p className="text-blue-100 text-xs">
+                  <p className="text-blue-200 text-xs">
                     {lang === 'fr'
                       ? 'Les modules suivants sont déblocables instantanément par paiement mobile M-Pesa sécurisé.'
                       : 'Subsequent specialist modules can be unlocked seamlessly with Safaricom M-Pesa STK Push.'}
                   </p>
                 </div>
               </div>
-              <span className="font-mono text-white font-bold bg-white/20 px-3.5 py-1.5 rounded-full border border-white/30 text-xs shrink-0 shadow-sm">
+              <span className="font-mono text-white font-bold bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20 text-xs shrink-0">
                 3 / 3 Free Modules
               </span>
             </div>

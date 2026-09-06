@@ -95,9 +95,9 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
       id="admin-login-modal"
       className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
     >
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden transition-all my-8">
-        {/* Top Accent Ribbon */}
-        <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-blue-700 h-2 w-full" />
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-lg w-full overflow-hidden transition-all my-8">
+        {/* Top Accent Bar */}
+        <div className="bg-blue-900 h-1.5 w-full" />
 
         {/* Header */}
         <div className="p-6 sm:p-8 bg-slate-900 text-white relative">
@@ -285,7 +285,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting || success}
-                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-xs transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isSubmitting ? (
                   <>

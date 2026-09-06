@@ -567,12 +567,12 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
           >
             <div className="max-w-5xl mx-auto space-y-8">
               {/* Presentation Cover Header Banner */}
-              <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white p-6 sm:p-8 rounded-3xl shadow-lg border border-slate-800 space-y-4">
+              <div className="bg-slate-900 text-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-800 space-y-4">
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 font-bold uppercase tracking-wider">
+                  <span className="px-3 py-1 rounded-md bg-blue-500/20 text-blue-300 border border-blue-400/30 font-bold uppercase tracking-wider">
                     {presentation.specialty}
                   </span>
-                  <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-bold">
+                  <span className="px-3 py-1 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-bold">
                     {presentation.cmeCredits} {t.creditsLabel}
                   </span>
                   <span className="text-slate-400 font-mono">
@@ -580,7 +580,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                   </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-tight">
                   <HighlightedText
                     text={
                       lang === 'fr' && presentation.titleFr
@@ -806,9 +806,9 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
               })}
 
               {/* End of Deck Action Card */}
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-3xl p-8 sm:p-10 text-center shadow-xl space-y-4">
+              <div className="bg-blue-900 text-white rounded-2xl p-8 sm:p-10 text-center shadow-sm space-y-4">
                 <Award className="w-12 h-12 mx-auto text-amber-300" />
-                <h3 className="text-xl sm:text-2xl font-black">
+                <h3 className="text-xl sm:text-2xl font-bold">
                   {lang === 'fr'
                     ? 'Module de formation terminé avec succès !'
                     : 'Presentation Deck Complete! Ready to Claim CME Credits?'}
@@ -822,7 +822,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                   <button
                     type="button"
                     onClick={onOpenQuiz}
-                    className="px-8 py-3.5 rounded-2xl bg-white hover:bg-slate-100 text-blue-700 font-extrabold text-sm sm:text-base shadow-lg transition-transform active:scale-95 inline-flex items-center gap-2"
+                    className="px-8 py-3 rounded-xl bg-white hover:bg-slate-100 text-blue-950 font-bold text-sm shadow-xs transition-colors inline-flex items-center gap-2"
                   >
                     <Award className="w-5 h-5 text-amber-500" />
                     <span>{quizPassed ? t.viewCertificate : t.takeQuiz}</span>
