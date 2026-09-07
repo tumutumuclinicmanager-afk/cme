@@ -22,7 +22,7 @@ export interface SlideImage {
   url: string;
   thumbnailUrl?: string;
   caption: string;
-  modality: 'X-Ray' | 'CT Scan' | 'MRI' | 'Ultrasound' | 'Histology' | 'ECG' | 'Clinical Photo';
+  modality: 'X-Ray' | 'CT Scan' | 'MRI' | 'Ultrasound' | 'Histology' | 'ECG' | 'Clinical Photo' | 'Angiography' | 'Dermoscopy';
   annotations?: SlideImageAnnotation[];
 }
 
@@ -48,6 +48,8 @@ export interface QuizQuestion {
   correctAnswerIndex: number;
   rationale: string;
   referenceGuideline?: string;
+  imageUrl?: string;
+  imageCaption?: string;
 }
 
 export interface Presentation {

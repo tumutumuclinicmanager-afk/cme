@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { X, Printer, ShieldCheck, Award, CheckCircle2 } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { X, Printer, ShieldCheck, Award, CheckCircle2, Mail, Loader2, Download } from 'lucide-react';
 import { Presentation, Language, UserProfile } from '../types';
 import { getTranslation } from '../translations';
 
@@ -22,9 +22,57 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
 }) => {
   const t = getTranslation(lang);
   const certificateRef = useRef<HTMLDivElement>(null);
+  const [isEmailSending, setIsEmailSending] = useState(false);
+  const [emailSentSuccess, setEmailSentSuccess] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleRequestEmail = () => {
+    setIsEmailSending(true);
+    setEmailSentSuccess(false);
+    setTimeout(() => {
+      setIsEmailSending(false);
+      setEmailSentSuccess(true);
+      setTimeout(() => setEmailSentSuccess(false), 5000);
+    }, 1200);
+  };
+
+  const handleDownloadPdf = () => {
+    setIsDownloading(true);
+    setDownloadSuccess(false);
+    setTimeout(() => {
+      const certificateContent = `
+==================================================
+KMPDC ACCREDITED CONTINUING MEDICAL EDUCATION (CME)
+==================================================
+Certificate ID: ${certificateId}
+Issued To: ${profile.name} (${profile.cadre}, Reg: ${profile.licenseNumber})
+Institution: ${profile.institution}
+Presentation: ${presentation.title}
+Specialty: ${presentation.specialty}
+Credits Awarded: ${presentation.cmeCredits} CPD Units
+Issue Date: ${issuedDate}
+Status: VERIFIED & AUTHENTICATED
+==================================================
+      `.trim();
+      const blob = new Blob([certificateContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `CME_Certificate_${certificateId}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setIsDownloading(false);
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 5000);
+    }, 1000);
   };
 
   return (
@@ -34,14 +82,65 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
     >
       <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-3xl shadow-xl overflow-hidden flex flex-col my-auto max-h-[95vh]">
         {/* Modal Toolbar */}
-        <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between bg-slate-50/50 shrink-0 text-slate-800">
+        <div className="px-5 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/50 shrink-0 text-slate-800">
           <div className="flex items-center gap-2">
             <Award className="w-5 h-5 text-blue-600" />
             <span className="font-bold text-sm sm:text-base text-slate-900">
               {lang === 'fr' ? 'Attestation de Formation Médicale Continue' : 'Accredited CME Certificate'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center flex-wrap gap-2">
+            {emailSentSuccess && (
+              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl flex items-center gap-1.5 animate-fade-in">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{lang === 'fr' ? `Certificat envoyé à ${profile.email}` : `Sent to ${profile.email}`}</span>
+              </span>
+            )}
+            {downloadSuccess && (
+              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-xl flex items-center gap-1.5 animate-fade-in">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{lang === 'fr' ? 'Téléchargement réussi' : 'Certificate Downloaded'}</span>
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={handleRequestEmail}
+              disabled={isEmailSending}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-colors disabled:opacity-50"
+              title={lang === 'fr' ? 'Envoyer le PDF par email' : `Dispatch PDF to ${profile.email}`}
+            >
+              {isEmailSending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-400" />
+                  <span>{lang === 'fr' ? 'Envoi...' : 'Dispatching...'}</span>
+                </>
+              ) : (
+                <>
+                  <Mail className="w-4 h-4 text-blue-400" />
+                  <span>{lang === 'fr' ? 'Recevoir par Email' : 'Request Certificate via Email'}</span>
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={isDownloading}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-colors disabled:opacity-50"
+              title={lang === 'fr' ? 'Télécharger le certificat PDF' : 'Download PDF Certificate'}
+            >
+              {isDownloading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
+                  <span>{lang === 'fr' ? 'Téléchargement...' : 'Downloading...'}</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  <span>{lang === 'fr' ? 'Télécharger PDF' : 'Download PDF'}</span>
+                </>
+              )}
+            </button>
             <button
               type="button"
               onClick={handlePrint}

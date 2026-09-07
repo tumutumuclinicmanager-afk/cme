@@ -36,6 +36,7 @@ interface SlideViewerProps {
   onOpenOfflineDownload: () => void;
   completedSlides: number[];
   quizPassed?: boolean;
+  initialSlideNumber?: number;
 }
 
 // Text highlighter component
@@ -76,6 +77,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   onOpenOfflineDownload,
   completedSlides,
   quizPassed = false,
+  initialSlideNumber,
 }) => {
   const t = getTranslation(lang);
   const slides = presentation.slides;
@@ -83,7 +85,12 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
 
   // View state
   const [viewMode, setViewMode] = useState<'scrollable' | 'slideshow'>('scrollable');
-  const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(0);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(() => {
+    if (initialSlideNumber && initialSlideNumber >= 1 && initialSlideNumber <= slides.length) {
+      return initialSlideNumber - 1;
+    }
+    return 0;
+  });
   const [showNotes, setShowNotes] = useState<boolean>(true);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [textScale, setTextScale] = useState<'normal' | 'large' | 'xl'>('normal');
@@ -172,6 +179,21 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
 
     return () => observer.disconnect();
   }, [viewMode, slides, onCompleteSlide]);
+
+  // Scroll to initial slide number on mount if provided
+  useEffect(() => {
+    if (initialSlideNumber && initialSlideNumber >= 1 && initialSlideNumber <= slides.length) {
+      const targetIdx = initialSlideNumber - 1;
+      setTimeout(() => {
+        if (viewMode === 'scrollable') {
+          const el = slideRefs.current[targetIdx];
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      }, 150);
+    }
+  }, [initialSlideNumber, viewMode, slides.length]);
 
   // Keyboard navigation
   useEffect(() => {

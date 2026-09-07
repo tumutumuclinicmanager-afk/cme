@@ -123,12 +123,29 @@ export const initialPresentations: Presentation[] = [
         ],
         speakerNotes: 'Emphasize that proton-pump inhibitors (PPI) should be prescribed alongside DAPT in patients with high GI bleeding risk (age > 65, anticoagulant co-use, prior peptic ulcer disease).',
         clinicalTakeaway: 'High-intensity statin + 12-month DAPT + Beta-blocker + ACEi forms the cornerstone of post-infarction secondary prevention.',
+        imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Transthoracic echocardiogram (parasternal long-axis view) post-revascularization assessing left ventricular ejection fraction and regional wall motion.',
+          modality: 'Ultrasound',
+          annotations: [
+            {
+              id: 'lv-anterior-wall',
+              xPercent: 48,
+              yPercent: 55,
+              label: 'Hypokinetic Anterior Segment',
+              description: 'Decreased systolic wall thickening in the territory of the acute LAD occlusion.',
+            },
+          ],
+        },
       },
     ],
     quiz: [
       {
         id: 'cardio-q1',
         vignette: 'A 58-year-old male presents to your triage desk with 45 minutes of crushing retrosternal chest pain radiating to his jaw. Vital signs: BP 86/54 mmHg, HR 52 bpm, SpO2 96% on room air. The 12-lead ECG demonstrates 3 mm ST elevation in leads II, III, and aVF with reciprocal depression in I and aVL. What is the most critical next step before administering sublingual nitroglycerin?',
+        imageUrl: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80',
+        imageCaption: '12-lead ECG: Hyperacute ST-elevation in inferior leads II, III, aVF with hypotension.',
         options: [
           'Administer intravenous morphine 4 mg immediately for pain control',
           'Obtain right-sided precordial leads (V3R-V4R) to assess for right ventricular infarction',
@@ -227,12 +244,29 @@ export const initialPresentations: Presentation[] = [
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
         videoTitle: 'Clinical Tutorial: High-Flow Nasal Cannula (HFNC) Setup & Work-of-Breathing Assessment',
         videoDuration: '04:12',
+        imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Pediatric high-flow nasal cannula (HFNC) delivery circuit and patient work-of-breathing monitoring setup.',
+          modality: 'Clinical Photo',
+          annotations: [
+            {
+              id: 'hfnc-cannula',
+              xPercent: 50,
+              yPercent: 46,
+              label: 'Humidified Nasal Prongs',
+              description: 'Delivering 2 L/kg/min with calibrated warmed FiO2 to reduce work of breathing.',
+            },
+          ],
+        },
       },
     ],
     quiz: [
       {
         id: 'peds-q1',
         vignette: 'A 2-year-old boy presents with a 2-day history of low-grade fever, rhinorrhea, and sudden onset of a harsh barking cough. On physical examination, he has audible inspiratory stridor while resting quietly on his mother’s lap, with mild intercostal retractions. SpO2 is 97% on ambient air. Which is the initial pharmacological treatment of choice?',
+        imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
+        imageCaption: 'AP soft-tissue neck radiograph showing subglottic tracheal tapering (Steeple sign).',
         options: [
           'Intravenous ampicillin-sulbactam and urgent rigid bronchoscopy',
           'Single-dose oral dexamethasone 0.6 mg/kg and nebulized L-epinephrine with a 2-4 hour observation window',
@@ -319,12 +353,29 @@ export const initialPresentations: Presentation[] = [
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
         videoTitle: 'Clinical Bedside Protocol: Passive Leg Raise Maneuver & IVC Ultrasound Assessment',
         videoDuration: '03:45',
+        imageUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Subxiphoid longitudinal POCUS view of the Inferior Vena Cava (IVC) showing >50% respiratory collapsibility indicating high likelihood of fluid responsiveness.',
+          modality: 'Ultrasound',
+          annotations: [
+            {
+              id: 'ivc-collapse',
+              xPercent: 51,
+              yPercent: 49,
+              label: 'Collapsing IVC Lumen',
+              description: 'Inspiratory decrease in caval diameter measuring < 1.4 cm, indicating low central venous pressure.',
+            },
+          ],
+        },
       },
     ],
     quiz: [
       {
         id: 'id-q1',
         vignette: 'A 68-year-old woman with urosepsis is brought to the resuscitation bay. BP is 78/46 mmHg (MAP 56 mmHg), HR 122 bpm, lactate 4.8 mmol/L. She has received 2000 mL of Ringer’s lactate over 30 minutes, but MAP remains 58 mmHg. Which is the most appropriate next intervention?',
+        imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80',
+        imageCaption: 'High-power microscopy showing toxic granulation and neutrophilic left shift.',
         options: [
           'Infuse an additional 3000 mL of 0.9% normal saline boluses',
           'Initiate continuous intravenous infusion of Norepinephrine titrated to maintain MAP ≥ 65 mmHg',
@@ -417,12 +468,29 @@ export const initialPresentations: Presentation[] = [
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
         videoTitle: 'Trauma Ultrasound: Dynamic M-Mode Demonstration of Lung Sliding vs Barcode Sign',
         videoDuration: '03:30',
+        imageUrl: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Thoracic POCUS M-mode tracing demonstrating the Stratosphere / Barcode Sign pathognomonic for traumatic pneumothorax.',
+          modality: 'Ultrasound',
+          annotations: [
+            {
+              id: 'pleural-line-mmode',
+              xPercent: 49,
+              yPercent: 47,
+              label: 'Stationary Pleural Line',
+              description: 'Horizontal parallel lines extending above and below the pleural line denoting absence of lung sliding.',
+            },
+          ],
+        },
       },
     ],
     quiz: [
       {
         id: 'trauma-q1',
         vignette: 'A 24-year-old motor vehicle crash victim arrives in hemorrhagic shock (BP 82/48 mmHg, HR 135 bpm). The eFAST exam demonstrates clear anechoic fluid in Morison’s pouch and the pelvis. The patient is transiently responsive to 1 liter of blood but remains unstable. What is the definitive management?',
+        imageUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80',
+        imageCaption: 'eFAST Morison’s pouch view: Jet-black anechoic fluid strip separating liver and kidney.',
         options: [
           'Immediate CT scan of the abdomen and pelvis with intravenous contrast',
           'Transfer to the operating room for emergent exploratory laparotomy',
@@ -460,7 +528,7 @@ export const initialPresentations: Presentation[] = [
     isFree: false, // Premium module!
     priceKes: 650,
     publishedDate: '2026-08-30',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=80',
     level: 'Specialist',
     slides: [
       {
@@ -476,9 +544,9 @@ export const initialPresentations: Presentation[] = [
         ],
         speakerNotes: 'Inspect the high-resolution sagittal T2 MRI below. Note the pathologic vertebral body fracture with posterior cortical retropulsion compressing the thecal sac and spinal cord at the T6 level.',
         clinicalTakeaway: 'Do not wait for morning or MRI confirmation to administer dexamethasone if MSCC is clinically suspected.',
-        imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1200&q=80',
         imageDetails: {
-          url: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80',
+          url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=1200&q=80',
           caption: 'Sagittal T2-weighted MRI of the thoracic spine illustrating acute metastatic epidural cord compression.',
           modality: 'MRI',
           annotations: [
@@ -505,12 +573,29 @@ export const initialPresentations: Presentation[] = [
         ],
         speakerNotes: 'Emphasize that bisphosphonates take 48-72 hours to reach peak therapeutic efficacy. Calcitonin (4-8 IU/kg SC/IM Q12H) can provide rapid transient calcium lowering during the initial 48-hour gap.',
         clinicalTakeaway: 'Hydration with normal saline is the immediate lifesaving step; bisphosphonates provide sustained osteoclast suppression.',
+        imageUrl: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Radiographic skeletal survey showing widespread osteolytic metastases and cortical thinning in malignancy-associated hypercalcemia.',
+          modality: 'X-Ray',
+          annotations: [
+            {
+              id: 'lytic-metastasis',
+              xPercent: 50,
+              yPercent: 45,
+              label: 'Osteolytic Lesion',
+              description: 'Prominent cortical erosion without sclerotic rim, characteristic of myeloma and metastatic carcinoma.',
+            },
+          ],
+        },
       },
     ],
     quiz: [
       {
         id: 'onco-q1',
         vignette: 'A 62-year-old man with metastatic prostate cancer presents with progressive difficulty climbing stairs and severe thoracic back pain worsening when lying flat. On exam, lower extremity motor strength is 3/5 with hyperreflexia and a sensory level at T8. What is the initial pharmacological step?',
+        imageUrl: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=800&q=80',
+        imageCaption: 'Sagittal thoracic MRI: Extradural soft tissue mass indenting the posterior cord margin.',
         options: [
           'Immediate administration of high-dose intravenous Dexamethasone (16 mg) alongside analgesic control',
           'Wait for whole-spine MRI confirmation scheduled for tomorrow morning',
@@ -548,7 +633,7 @@ export const initialPresentations: Presentation[] = [
     isFree: false, // Premium module!
     priceKes: 550,
     publishedDate: '2026-09-01',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
     level: 'Advanced',
     slides: [
       {
@@ -564,9 +649,9 @@ export const initialPresentations: Presentation[] = [
         ],
         speakerNotes: 'The WOMAN trial demonstrated that early intravenous tranexamic acid (1 g infused within 3 hours of birth) reduces death due to bleeding by nearly one-third without increasing thromboembolic risk.',
         clinicalTakeaway: 'Administer 1g IV tranexamic acid within 3 hours of birth in all patients with blood loss exceeding 500 mL or clinical signs of hemodynamic instability.',
-        imageUrl: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=1200&q=80',
+        imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80',
         imageDetails: {
-          url: 'https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=1200&q=80',
+          url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80',
           caption: 'Bedside pelvic ultrasound displaying balloon tamponade catheter seated securely within the uterine cavity.',
           modality: 'Ultrasound',
           annotations: [
@@ -596,12 +681,29 @@ export const initialPresentations: Presentation[] = [
         videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
         videoTitle: 'Clinical Protocol: Sterile Insertion and Saline Inflation of Intrauterine Tamponade Balloon',
         videoDuration: '04:00',
+        imageUrl: 'https://images.unsplash.com/photo-1583912267670-6575ad362e3b?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1583912267670-6575ad362e3b?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Bakri intrauterine balloon catheter device, stopcock ports, and gravity drainage collection system.',
+          modality: 'Clinical Photo',
+          annotations: [
+            {
+              id: 'stopcock-port',
+              xPercent: 50,
+              yPercent: 44,
+              label: 'Filling Port & Stopcock',
+              description: 'Dual lumen catheter permitting continuous uterine hemostasis and real-time hemorrhage rate measurement.',
+            },
+          ],
+        },
       },
     ],
     quiz: [
       {
         id: 'obgyn-q1',
         vignette: 'A 28-year-old G2P2 delivers a 4.1 kg infant. Fifteen minutes after delivery, you note continuous brisk vaginal bleeding totaling 800 mL. The uterus is soft, boggy, and palpated above the umbilicus. Her BP is 90/58 mmHg, HR 118 bpm. Bimanual massage and IV Oxytocin are underway. Which medication should be administered within 3 hours to reduce bleeding mortality?',
+        imageUrl: 'https://images.unsplash.com/photo-1583912267670-6575ad362e3b?auto=format&fit=crop&w=800&q=80',
+        imageCaption: 'Sterile surgical tray with Bakri balloon catheter and postpartum hemorrhage resuscitation pack.',
         options: [
           'Intravenous Tranexamic Acid (TXA) 1 g infused over 10 minutes',
           'Subcutaneous Heparin 5000 IU',
@@ -611,6 +713,213 @@ export const initialPresentations: Presentation[] = [
         correctAnswerIndex: 0,
         rationale: 'Intravenous Tranexamic Acid (TXA) 1 g given over 10 minutes within 3 hours of birth is a WHO-endorsed intervention that significantly reduces maternal mortality from postpartum hemorrhage without increasing venous thromboembolism.',
         referenceGuideline: 'WHO Recommendations on Postpartum Hemorrhage Prevention and Treatment & WOMAN Trial.',
+      },
+    ],
+  },
+
+  {
+    id: 'cme-neuro-07',
+    title: 'Acute Ischemic Stroke: Non-Contrast CT ASPECTS & Mechanical Thrombectomy',
+    titleFr: 'Accident Vasculaire Cérébral Ischémique Aigu : Score ASPECTS & Thrombectomie Mécanique',
+    specialty: 'Neurology',
+    cmeCredits: 3.0,
+    estimatedMinutes: 55,
+    facultyAuthor: 'Dr. Farida K. Omar, MD, FRCPC (Neurology)',
+    institution: 'Nairobi Comprehensive Stroke & Neurovascular Center',
+    summary: 'Time is brain: rapid non-contrast head CT interpretation, 10-point ASPECTS scoring, Tenecteplase 0.25 mg/kg thrombolysis window, and large vessel occlusion (LVO) triage for catheter-directed endovascular thrombectomy.',
+    summaryFr: 'Prise en charge de l’AVC ischémique : scanner sans injection et score ASPECTS, thrombolyse par ténectéplase et critères d’orientation vers la thrombectomie mécanique.',
+    learningObjectives: [
+      'Calculate the 10-point ASPECTS score accurately on axial non-contrast brain CT scans.',
+      'Identify early signs of ischemia: loss of insular ribbon, lentiform nucleus obscuration, and sulcal effacement.',
+      'Execute eligibility criteria for intravenous tenecteplase vs alteplase within the 4.5-hour therapeutic window.',
+    ],
+    isFree: false,
+    priceKes: 600,
+    publishedDate: '2026-09-03',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=800&q=80',
+    level: 'Specialist',
+    slides: [
+      {
+        id: 'cme-neuro-07-s1',
+        slideNumber: 1,
+        title: 'Non-Contrast CT: ASPECTS Scoring & Early Infarction Signs',
+        subtitle: 'Subtle Parenchymal Hypodensity & Gray-White Matter Differentiation',
+        contentBullets: [
+          'ASPECTS evaluates 10 topographic regions of the middle cerebral artery (MCA) territory.',
+          'Start with 10 points; subtract 1 point for each region with parenchymal hypoattenuation.',
+          'An ASPECTS score < 6 correlates with poor functional outcome and increased hemorrhage transformation.',
+          'Early radiologic signs: loss of insular ribbon, obscuration of lentiform nucleus, and hyperdense MCA sign.',
+        ],
+        speakerNotes: 'Inspect the non-contrast head CT scan below. Notice the subtle hypoattenuation in the left insular cortex and effacement of the ipsilateral Sylvian fissure indicating hyperacute cytotoxic edema.',
+        clinicalTakeaway: 'Normal non-contrast CT does not rule out acute ischemic stroke; it rules out intracranial hemorrhage to enable safe immediate thrombolysis.',
+        imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Axial non-contrast head CT demonstrating early acute ischemic changes in the left middle cerebral artery territory with insular ribbon loss.',
+          modality: 'CT Scan',
+          annotations: [
+            {
+              id: 'insular-ribbon',
+              xPercent: 62,
+              yPercent: 44,
+              label: 'Loss of Insular Ribbon',
+              description: 'Loss of gray-white matter differentiation in the insular cortex due to cytotoxic edema.',
+            },
+            {
+              id: 'mca-hyperdense',
+              xPercent: 57,
+              yPercent: 51,
+              label: 'Hyperdense MCA Sign',
+              description: 'Increased attenuation in M1 segment corresponding to acute endovascular thrombus.',
+            },
+          ],
+        },
+      },
+      {
+        id: 'cme-neuro-07-s2',
+        slideNumber: 2,
+        title: 'CT Angiography & Endovascular Thrombectomy (EVT) Windows',
+        subtitle: 'Large Vessel Occlusion (LVO) Selection from 0 to 24 Hours',
+        contentBullets: [
+          'Immediate CT Angiography (CTA) from arch to vertex without waiting for serum creatinine.',
+          'Identify proximal LVO: Terminal internal carotid artery (ICA), MCA M1 or dominant M2 segment.',
+          'Patients within 6 hours of onset with ASPECTS ≥ 6 qualify for immediate mechanical thrombectomy.',
+          'Extended window (6-24 hours): Perfusion CT (DAWN/DEFUSE-3 criteria) selecting salvageable ischemic penumbra.',
+        ],
+        speakerNotes: 'Thrombectomy does not replace IV thrombolysis; eligible patients receive IV Tenecteplase immediately while mobilizing the neurointerventional catheterization laboratory.',
+        clinicalTakeaway: 'Number needed to treat (NNT) for functional independence with mechanical thrombectomy in proximal LVO is approximately 2.6.',
+        imageUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=1200&q=80',
+          caption: 'CT Angiography (CTA) maximum intensity projection showing abrupt occlusion of the right M1 segment with collateral vessel preservation.',
+          modality: 'Angiography',
+          annotations: [
+            {
+              id: 'm1-cutoff',
+              xPercent: 46,
+              yPercent: 48,
+              label: 'M1 Truncation Point',
+              description: 'Complete termination of contrast flow at proximal right MCA bifurcation.',
+            },
+          ],
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'neuro-q1',
+        vignette: 'A 66-year-old woman arrives at your emergency department 2 hours after acute onset of right-sided hemiplegia and global aphasia. Blood pressure is 175/95 mmHg, blood glucose 6.2 mmol/L. Non-contrast brain CT reveals an ASPECTS score of 8 with no hemorrhage. CTA demonstrates an acute occlusion of the left MCA M1 segment. Which is the immediate therapeutic strategy?',
+        imageUrl: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&w=800&q=80',
+        imageCaption: 'Non-contrast CT scan showing preservation of basal ganglia structures and ASPECTS 8.',
+        options: [
+          'Administer IV Tenecteplase 0.25 mg/kg immediately and activate the neurointervention team for urgent endovascular thrombectomy',
+          'Administer IV Heparin bolus and wait 24 hours for repeat CT scan',
+          'Lower systolic blood pressure aggressively to < 120 mmHg before giving any medication',
+          'Withhold thrombolysis and transfer the patient directly to the general medical ward',
+        ],
+        correctAnswerIndex: 0,
+        rationale: 'In acute ischemic stroke with proximal large vessel occlusion presenting within 4.5 hours, guideline-directed therapy is intravenous thrombolysis (IV Tenecteplase 0.25 mg/kg single bolus) combined with emergent mechanical thrombectomy.',
+        referenceGuideline: 'AHA/ASA Guidelines for the Early Management of Patients with Acute Ischemic Stroke.',
+      },
+    ],
+  },
+
+  {
+    id: 'cme-derm-08',
+    title: 'Cutaneous Emergencies & Tropical Dermoscopy Atlas',
+    titleFr: 'Urgences Dermatologiques & Atlas de Dermoscopie Tropicale',
+    specialty: 'Infectious Diseases',
+    cmeCredits: 2.0,
+    estimatedMinutes: 40,
+    facultyAuthor: 'Dr. Samuel M. Gitau, MBChB, MMed (Derm)',
+    institution: 'East Africa Institute of Clinical Dermatology',
+    summary: 'High-resolution visual recognition of life-threatening dermatoses: Stevens-Johnson syndrome (SJS), Toxic Epidermal Necrolysis (TEN), drug reaction with eosinophilia and systemic symptoms (DRESS), and dermoscopic lesion triage.',
+    summaryFr: 'Reconnaissance visuelle haute résolution des dermatoses menaçant le pronostic vital : syndrome de Stevens-Johnson, nécrolyse épidermique toxique et dermoscopie des lésions cutanées.',
+    learningObjectives: [
+      'Assess cutaneous detachment percentage and SCORTEN severity prognosis in acute SJS/TEN.',
+      'Demonstrate a positive Nikolsky sign and identify mucocutaneous target lesions.',
+      'Deploy polarized dermoscopy to differentiate benign pigmented lesions from early malignant melanoma.',
+    ],
+    isFree: false,
+    priceKes: 450,
+    publishedDate: '2026-09-04',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80',
+    level: 'Advanced',
+    slides: [
+      {
+        id: 'cme-derm-08-s1',
+        slideNumber: 1,
+        title: 'Severe Cutaneous Adverse Reactions (SCAR): SJS vs TEN',
+        subtitle: 'SCORTEN Score, Nikolsky Sign & Mucosal Involvement',
+        contentBullets: [
+          'Stevens-Johnson Syndrome: < 10% Body Surface Area (BSA) epidermal detachment.',
+          'TEN / SJS overlap: 10-30% BSA detachment; Toxic Epidermal Necrolysis (TEN): > 30% BSA.',
+          'Direct Nikolsky sign: Gentle lateral shear pressure causes mechanical dislodgement of the epidermis.',
+          'Immediate cessation of all suspect drugs (allopurinol, sulfonamides, carbamazepine, nevirapine).',
+        ],
+        speakerNotes: 'Examine the clinical photograph below showing dusky erythematous confluent macules with epidermal wrinkling and detachment. Strict barrier nursing in a specialized burn unit environment is essential.',
+        clinicalTakeaway: 'SCORTEN score calculated within the first 24 hours predicts mortality and directs ICU or burn-center admission.',
+        imageUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1200&q=80',
+          caption: 'Clinical presentation of full-thickness epidermal necrosis and flaccid bullae with positive Nikolsky sign in acute Toxic Epidermal Necrolysis.',
+          modality: 'Clinical Photo',
+          annotations: [
+            {
+              id: 'bullae-detachment',
+              xPercent: 52,
+              yPercent: 47,
+              label: 'Epidermal Detachment Area',
+              description: 'Flaccid bullae with sheet-like sloughing of epidermis exposing bleeding dermis.',
+            },
+          ],
+        },
+      },
+      {
+        id: 'cme-derm-08-s2',
+        slideNumber: 2,
+        title: 'Polarized Dermoscopy: Pigment Networks & Critical Red Flags',
+        subtitle: 'Pattern Analysis for Cutaneous Neoplasia and Melanoma Screening',
+        contentBullets: [
+          'Contact polarized dermoscopy visualizes superficial and deep dermal structures without immersion oil.',
+          'Atypical pigment network: Asymmetric thick lines and uneven meshes indicating disordered melanocyte proliferation.',
+          'Blue-white veil: Irregular confluent blue pigmentation with ground-glass haze indicating invasive vertical growth.',
+          'Chrysalis structures: Shiny white linear streaks visible only under polarized light reflecting collagen remodeling.',
+        ],
+        speakerNotes: 'Look closely at the dermoscopy image. Notice the peripheral pigment network disruption, asymmetric blotches, and focal blue-gray pepper granules representing melanophages in the papillary dermis.',
+        clinicalTakeaway: 'Any suspicious pigmented lesion with architectural disorder requires full-thickness excisional biopsy with 2mm margins.',
+        imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
+        imageDetails: {
+          url: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
+          caption: 'High-magnification polarized dermoscopy revealing an atypical pigment network, irregular peripheral pseudopods, and central regression.',
+          modality: 'Dermoscopy',
+          annotations: [
+            {
+              id: 'atypical-net',
+              xPercent: 48,
+              yPercent: 52,
+              label: 'Disordered Pigment Reticulum',
+              description: 'Widened pigment cords with marked architectural polymorphism.',
+            },
+          ],
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'derm-q1',
+        vignette: 'A 42-year-old male HIV-positive patient on antiretroviral therapy and cotrimoxazole presents with a 3-day history of high fever, painful conjunctivitis, oral mucositis, and widespread dusky red macules covering 35% of his total body surface area with sheet-like epidermal sloughing when rubbed. Which is the initial priority management step?',
+        imageUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80',
+        imageCaption: 'Extensive epidermal peeling exceeding 30% body surface area with mucocutaneous target lesions.',
+        options: [
+          'Immediately discontinue cotrimoxazole and suspect drugs, initiate fluid resuscitation, and admit to a burn unit/ICU',
+          'Administer high-dose topical fluorouracil to the sloughing areas',
+          'Increase the cotrimoxazole dose to treat secondary skin infection',
+          'Discharge with oral antihistamines and outpatient follow-up',
+        ],
+        correctAnswerIndex: 0,
+        rationale: 'The presentation is diagnostic of Toxic Epidermal Necrolysis (> 30% BSA detachment with mucosal involvement). The single most important factor reducing mortality is immediate prompt cessation of causative culprit medications, accompanied by supportive fluid/electrolyte resuscitation and burn unit care.',
+        referenceGuideline: 'British Association of Dermatologists (BAD) Guidelines for the Management of SJS/TEN.',
       },
     ],
   },

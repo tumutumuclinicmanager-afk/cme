@@ -19,6 +19,8 @@ import {
   Info,
   GraduationCap,
   ShieldAlert,
+  Image as ImageIcon,
+  Layers,
 } from 'lucide-react';
 import {
   Presentation,
@@ -50,6 +52,7 @@ import { AdminLoginModal } from './components/AdminLoginModal';
 import { OfflineSyncBanner } from './components/OfflineSyncBanner';
 import { RecommendationsSection } from './components/RecommendationsSection';
 import { GamificationDashboard } from './components/GamificationDashboard';
+import { ClinicalAtlas } from './components/ClinicalAtlas';
 import {
   getOfflineSyncQueue,
   enqueueOfflineProgress,
@@ -156,11 +159,15 @@ export default function App() {
 
   // Modals state
   const [activeSlidePresentation, setActiveSlidePresentation] = useState<Presentation | null>(null);
+  const [activeSlideInitialNumber, setActiveSlideInitialNumber] = useState<number | undefined>(undefined);
   const [activeQuizPresentation, setActiveQuizPresentation] = useState<Presentation | null>(null);
   const [activeCertificatePresentation, setActiveCertificatePresentation] = useState<Presentation | null>(null);
   const [activeMPesaPresentation, setActiveMPesaPresentation] = useState<Presentation | null>(null);
   const [activeOfflinePresentation, setActiveOfflinePresentation] = useState<Presentation | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  // Learner view tab navigation
+  const [activeLearnerTab, setActiveLearnerTab] = useState<'catalog' | 'atlas' | 'gamification' | 'recommendations'>('catalog');
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -458,6 +465,17 @@ export default function App() {
     return generateRecommendations(presentations, userProgressList, profile, lang);
   }, [presentations, userProgressList, profile, lang]);
 
+  // Total Clinical Scans across all modules
+  const totalAtlasImagesCount = useMemo(() => {
+    let count = 0;
+    presentations.forEach((p) => {
+      p.slides.forEach((s) => {
+        if (s.imageDetails) count++;
+      });
+    });
+    return count;
+  }, [presentations]);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col selection:bg-blue-600 selection:text-white">
       {/* Header */}
@@ -630,142 +648,279 @@ export default function App() {
               </div>
             </div>
 
-            {/* Content Recommendation Engine */}
-            <RecommendationsSection
-              recommendations={recommendations}
-              profile={profile}
-              lang={lang}
-              onSelectPresentation={(pres) => setActiveSlidePresentation(pres)}
-              onOpenQuiz={(pres) => setActiveQuizPresentation(pres)}
-              onUpdateInterests={handleUpdateAreasOfInterest}
-            />
-
-            {/* Gamification Dashboard: Points, Badges, and Leaderboard */}
-            <GamificationDashboard
-              points={userCmePoints}
-              tier={clinicianTier}
-              badges={clinicianBadges}
-              leaderboard={leaderboard}
-              userRank={userRank}
-              profile={profile}
-              lang={lang}
-            />
-
-            {/* Freemium Notice Banner */}
-            <div className="bg-blue-950 text-white rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-blue-900">
-              <div className="flex items-center gap-3.5">
-                <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shrink-0">
-                  <Sparkles className="w-5 h-5 text-amber-400" />
-                </div>
-                <div>
-                  <span className="font-bold text-white block text-sm sm:text-base">
-                    {lang === 'fr'
-                      ? 'Accès Libre : Les 3 premières présentations sont gratuites'
-                      : 'Freemium Access: First 3 presentations are 100% free'}
-                  </span>
-                  <p className="text-blue-200 text-xs">
-                    {lang === 'fr'
-                      ? 'Les modules suivants sont déblocables instantanément par paiement mobile M-Pesa sécurisé.'
-                      : 'Subsequent specialist modules can be unlocked seamlessly with Safaricom M-Pesa STK Push.'}
-                  </p>
-                </div>
-              </div>
-              <span className="font-mono text-white font-bold bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20 text-xs shrink-0">
-                3 / 3 Free Modules
-              </span>
-            </div>
-
-            {/* Search and Specialty Filter Bar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-xs">
-              {/* Search input */}
-              <div className="relative flex-1 min-w-0">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                  <Search className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t.searchPlaceholder}
-                  className="w-full pl-10 pr-4 py-2 rounded-full bg-slate-100 border border-transparent text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
-                />
-              </div>
-
-              {/* Specialty dropdown */}
-              <div className="flex items-center gap-2 shrink-0">
-                <Filter className="w-4 h-4 text-slate-400" />
-                <select
-                  value={selectedSpecialty}
-                  onChange={(e) => setSelectedSpecialty(e.target.value)}
-                  className="px-4 py-2 rounded-full bg-slate-100 border border-transparent text-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white font-medium cursor-pointer"
+            {/* Primary Navigation Tabs */}
+            <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
+              <button
+                type="button"
+                onClick={() => setActiveLearnerTab('catalog')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                  activeLearnerTab === 'catalog'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>{lang === 'fr' ? 'Modules & Présentations' : 'CME Modules & Slides'}</span>
+                <span
+                  className={`text-[11px] font-mono px-1.5 py-0.5 rounded-md ${
+                    activeLearnerTab === 'catalog'
+                      ? 'bg-slate-800 text-white'
+                      : 'bg-slate-100 text-slate-600'
+                  }`}
                 >
-                  <option value="All">{t.allSpecialties}</option>
-                  {Object.keys(specialtyTranslations).map((spec) => (
-                    <option key={spec} value={spec}>
-                      {specialtyTranslations[spec as MedicalSpecialty][lang]}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  {presentations.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveLearnerTab('atlas')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                  activeLearnerTab === 'atlas'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                <ImageIcon className="w-4 h-4 text-emerald-600" />
+                <span>{lang === 'fr' ? 'Atlas d’Imagerie Médicale' : 'Clinical Imaging Atlas'}</span>
+                <span
+                  className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                    activeLearnerTab === 'atlas'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  }`}
+                >
+                  {totalAtlasImagesCount} {lang === 'fr' ? 'clichés' : 'scans'}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveLearnerTab('gamification')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                  activeLearnerTab === 'gamification'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                <Award className="w-4 h-4 text-amber-500" />
+                <span>{lang === 'fr' ? 'Progression & Classement' : 'Leaderboard & Badges'}</span>
+                <span
+                  className={`text-[11px] font-mono px-1.5 py-0.5 rounded-md ${
+                    activeLearnerTab === 'gamification'
+                      ? 'bg-slate-800 text-white'
+                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  }`}
+                >
+                  {userCmePoints} pts
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveLearnerTab('recommendations')}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                  activeLearnerTab === 'recommendations'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white text-slate-700 hover:bg-slate-100 border border-slate-200'
+                }`}
+              >
+                <Sparkles className="w-4 h-4 text-blue-500" />
+                <span>{lang === 'fr' ? 'Recommandations' : 'Recommended For You'}</span>
+              </button>
             </div>
 
-            {/* Catalog Grid */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  {t.navCatalog} ({filteredPresentations.length})
-                </h3>
-              </div>
+            {/* TAB CONTENT */}
+            {activeLearnerTab === 'atlas' && (
+              <ClinicalAtlas
+                presentations={presentations}
+                lang={lang}
+                onOpenPresentationSlide={(pres, slideNumber) => {
+                  setActiveSlideInitialNumber(slideNumber);
+                  setActiveSlidePresentation(pres);
+                }}
+              />
+            )}
 
-              {filteredPresentations.length === 0 ? (
-                <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3 shadow-xs">
-                  <BookOpen className="w-10 h-10 text-slate-400 mx-auto" />
-                  <h4 className="text-base font-semibold text-slate-800">
-                    {lang === 'fr' ? 'Aucun module trouvé' : 'No presentations matched your search'}
-                  </h4>
-                  <p className="text-xs text-slate-500">
-                    {lang === 'fr'
-                      ? 'Essayez de modifier vos filtres ou termes de recherche.'
-                      : 'Try adjusting your search terms or specialty filters.'}
-                  </p>
+            {activeLearnerTab === 'gamification' && (
+              <GamificationDashboard
+                points={userCmePoints}
+                tier={clinicianTier}
+                badges={clinicianBadges}
+                leaderboard={leaderboard}
+                userRank={userRank}
+                profile={profile}
+                lang={lang}
+              />
+            )}
+
+            {activeLearnerTab === 'recommendations' && (
+              <RecommendationsSection
+                recommendations={recommendations}
+                profile={profile}
+                lang={lang}
+                onSelectPresentation={(pres) => setActiveSlidePresentation(pres)}
+                onOpenQuiz={(pres) => setActiveQuizPresentation(pres)}
+                onUpdateInterests={handleUpdateAreasOfInterest}
+              />
+            )}
+
+            {activeLearnerTab === 'catalog' && (
+              <div className="space-y-6">
+                {/* Visual Clinical Atlas Feature Spotlight */}
+                <div className="bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-start sm:items-center gap-3.5">
+                    <div className="w-11 h-11 rounded-xl bg-blue-600/30 border border-blue-500/40 text-blue-300 flex items-center justify-center shrink-0">
+                      <ImageIcon className="w-6 h-6" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-950/70 border border-emerald-800/80 px-2 py-0.5 rounded">
+                          {totalAtlasImagesCount} DIAGNOSTIC SCANS
+                        </span>
+                        <span className="text-[11px] text-slate-400 font-medium">
+                          High-Resolution Visual Repository
+                        </span>
+                      </div>
+                      <h4 className="text-sm sm:text-base font-bold text-white">
+                        {lang === 'fr'
+                          ? 'Atlas d’Imagerie Diagnostique & Annotations Cliniques'
+                          : 'Interactive Clinical Imaging Atlas & Caliper Inspection'}
+                      </h4>
+                      <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+                        {lang === 'fr'
+                          ? 'Consultez la collection d’échographies FAST, radiographies thoraciques, scanners cérébraux ASPECTS et dermoscopies avec repères anatomiques interactifs.'
+                          : 'Explore high-resolution trauma ultrasounds, STEMI catheterization, pediatric chest X-rays, stroke CT scans, and dermoscopy with interactive hotspot annotations.'}
+                      </p>
+                    </div>
+                  </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSelectedSpecialty('All');
-                    }}
-                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-semibold"
+                    onClick={() => setActiveLearnerTab('atlas')}
+                    className="shrink-0 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-2"
                   >
-                    {lang === 'fr' ? 'Réinitialiser les filtres' : 'Reset filters'}
+                    <span>{lang === 'fr' ? 'Consulter l’Atlas' : 'Explore Clinical Atlas'}</span>
+                    <span className="text-xs font-mono">→</span>
                   </button>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredPresentations.map((pres, index) => {
-                    const originalIndex = presentations.findIndex((p) => p.id === pres.id);
-                    const unlocked = isPresentationUnlocked(pres, originalIndex);
-                    const progress = userProgressList.find((p) => p.presentationId === pres.id);
-                    const isCached = offlineCachedIds.includes(pres.id);
 
-                    return (
-                      <PresentationCard
-                        key={pres.id}
-                        presentation={pres}
-                        lang={lang}
-                        progress={progress}
-                        isUnlocked={unlocked}
-                        onOpenPresentation={() => setActiveSlidePresentation(pres)}
-                        onOpenQuiz={() => setActiveQuizPresentation(pres)}
-                        onOpenCertificate={() => setActiveCertificatePresentation(pres)}
-                        onOpenMPesa={() => setActiveMPesaPresentation(pres)}
-                        onOpenOfflineDownload={() => setActiveOfflinePresentation(pres)}
-                        isOfflineCached={isCached}
-                      />
-                    );
-                  })}
+                {/* Freemium Notice Banner */}
+                <div className="bg-blue-950 text-white rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-blue-900">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center shrink-0">
+                      <Sparkles className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <span className="font-bold text-white block text-sm sm:text-base">
+                        {lang === 'fr'
+                          ? 'Accès Libre : Les 3 premières présentations sont gratuites'
+                          : 'Freemium Access: First 3 presentations are 100% free'}
+                      </span>
+                      <p className="text-blue-200 text-xs">
+                        {lang === 'fr'
+                          ? 'Les modules suivants sont déblocables instantanément par paiement mobile M-Pesa sécurisé.'
+                          : 'Subsequent specialist modules can be unlocked seamlessly with Safaricom M-Pesa STK Push.'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="font-mono text-white font-bold bg-white/10 px-3.5 py-1.5 rounded-full border border-white/20 text-xs shrink-0">
+                    3 / 3 Free Modules
+                  </span>
                 </div>
-              )}
-            </div>
+
+                {/* Search and Specialty Filter Bar */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-xs">
+                  {/* Search input */}
+                  <div className="relative flex-1 min-w-0">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                      <Search className="w-4 h-4" />
+                    </div>
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder={t.searchPlaceholder}
+                      className="w-full pl-10 pr-4 py-2 rounded-full bg-slate-100 border border-transparent text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                    />
+                  </div>
+
+                  {/* Specialty dropdown */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Filter className="w-4 h-4 text-slate-400" />
+                    <select
+                      value={selectedSpecialty}
+                      onChange={(e) => setSelectedSpecialty(e.target.value)}
+                      className="px-4 py-2 rounded-full bg-slate-100 border border-transparent text-slate-700 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white font-medium cursor-pointer"
+                    >
+                      <option value="All">{t.allSpecialties}</option>
+                      {Object.keys(specialtyTranslations).map((spec) => (
+                        <option key={spec} value={spec}>
+                          {specialtyTranslations[spec as MedicalSpecialty][lang]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Catalog Grid */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      {t.navCatalog} ({filteredPresentations.length})
+                    </h3>
+                  </div>
+
+                  {filteredPresentations.length === 0 ? (
+                    <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3 shadow-xs">
+                      <BookOpen className="w-10 h-10 text-slate-400 mx-auto" />
+                      <h4 className="text-base font-semibold text-slate-800">
+                        {lang === 'fr' ? 'Aucun module trouvé' : 'No presentations matched your search'}
+                      </h4>
+                      <p className="text-xs text-slate-500">
+                        {lang === 'fr'
+                          ? 'Essayez de modifier vos filtres ou termes de recherche.'
+                          : 'Try adjusting your search terms or specialty filters.'}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setSelectedSpecialty('All');
+                        }}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-blue-600 text-xs font-semibold"
+                      >
+                        {lang === 'fr' ? 'Réinitialiser les filtres' : 'Reset filters'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredPresentations.map((pres, index) => {
+                        const originalIndex = presentations.findIndex((p) => p.id === pres.id);
+                        const unlocked = isPresentationUnlocked(pres, originalIndex);
+                        const progress = userProgressList.find((p) => p.presentationId === pres.id);
+                        const isCached = offlineCachedIds.includes(pres.id);
+
+                        return (
+                          <PresentationCard
+                            key={pres.id}
+                            presentation={pres}
+                            lang={lang}
+                            progress={progress}
+                            isUnlocked={unlocked}
+                            onOpenPresentation={() => setActiveSlidePresentation(pres)}
+                            onOpenQuiz={() => setActiveQuizPresentation(pres)}
+                            onOpenCertificate={() => setActiveCertificatePresentation(pres)}
+                            onOpenMPesa={() => setActiveMPesaPresentation(pres)}
+                            onOpenOfflineDownload={() => setActiveOfflinePresentation(pres)}
+                            isOfflineCached={isCached}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -812,13 +967,18 @@ export default function App() {
         <SlideViewer
           presentation={activeSlidePresentation}
           lang={lang}
-          onClose={() => setActiveSlidePresentation(null)}
+          initialSlideNumber={activeSlideInitialNumber}
+          onClose={() => {
+            setActiveSlidePresentation(null);
+            setActiveSlideInitialNumber(undefined);
+          }}
           onCompleteSlide={(slideNum) =>
             handleCompleteSlide(activeSlidePresentation.id, slideNum)
           }
           onOpenQuiz={() => {
             const pres = activeSlidePresentation;
             setActiveSlidePresentation(null);
+            setActiveSlideInitialNumber(undefined);
             setActiveQuizPresentation(pres);
           }}
           onOpenOfflineDownload={() => {
