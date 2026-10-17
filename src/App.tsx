@@ -30,6 +30,7 @@ import {
   UserProfile,
   MedicalSpecialty,
   QuizAttempt,
+  AdminUser,
 } from './types';
 import { SyncQueueItem } from './types';
 import { getTranslation, specialtyTranslations } from './translations';
@@ -38,6 +39,7 @@ import {
   initialUserProfile,
   initialUserProgressList,
   initialMPesaTransactions,
+  initialAdminUsers,
 } from './data/mockData';
 import { Header } from './components/Header';
 import { PresentationCard } from './components/PresentationCard';
@@ -49,6 +51,8 @@ import { OfflineDownloadModal } from './components/OfflineDownloadModal';
 import { SettingsModal } from './components/SettingsModal';
 import { AdminAnalytics } from './components/AdminAnalytics';
 import { AdminLoginModal } from './components/AdminLoginModal';
+import { LandingPage } from './components/LandingPage';
+import { AuthModal } from './components/AuthModal';
 import { OfflineSyncBanner } from './components/OfflineSyncBanner';
 import { RecommendationsSection } from './components/RecommendationsSection';
 import { GamificationDashboard } from './components/GamificationDashboard';
@@ -67,6 +71,9 @@ import {
   getClinicianTier,
 } from './utils/gamification';
 
+import { db } from './firebase';
+import { collection, doc, setDoc, onSnapshot } from 'firebase/firestore';
+
 export default function App() {
   // Persistence state
   const [lang, setLang] = useState<Language>(() => {
@@ -74,11 +81,29 @@ export default function App() {
     return (saved as Language) || 'en';
   });
 
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem('cme_dark_mode') === 'true';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cme_dark_mode', String(darkMode));
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
   const [role, setRole] = useState<'learner' | 'admin'>('learner');
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('cme_admin_authenticated') === 'true';
   });
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    return localStorage.getItem('cme_is_logged_in') === 'true';
+  });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
   const [profile, setProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem('cme_user_profile');
@@ -109,17 +134,38 @@ export default function App() {
     setRole('learner');
   };
 
-  const [presentations, setPresentations] = useState<Presentation[]>(() => {
-    const saved = localStorage.getItem('cme_presentations');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
+  const [presentations, setPresentations] = useState<Presentation[]>(initialPresentations);
+
+  // Real-time Firestore sync for presentations & uploads
+  useEffect(() => {
+    const q = collection(db, 'presentations');
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const firestorePresentations: Presentation[] = [];
+          snapshot.forEach((docSnap) => {
+            firestorePresentations.push(docSnap.data() as Presentation);
+          });
+          setPresentations(firestorePresentations);
+        } else {
+          // If Firestore is empty, seed initial presentations
+          initialPresentations.forEach(async (pres) => {
+            try {
+              await setDoc(doc(db, 'presentations', pres.id), pres);
+            } catch (e) {
+              console.error('Error seeding presentation:', e);
+            }
+          });
+        }
+      },
+      (error) => {
+        console.error('Firestore snapshot error:', error);
       }
-    }
-    return initialPresentations;
-  });
+    );
+
+    return () => unsubscribe();
+  }, []);
 
   const [userProgressList, setUserProgressList] = useState<UserProgress[]>(() => {
     const saved = localStorage.getItem('cme_user_progress');
@@ -156,6 +202,22 @@ export default function App() {
     }
     return ['cme-cardio-01'];
   });
+
+  const [adminUsers, setAdminUsers] = useState<AdminUser[]>(() => {
+    const saved = localStorage.getItem('cme_admin_users');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        // fallback
+      }
+    }
+    return initialAdminUsers;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cme_admin_users', JSON.stringify(adminUsers));
+  }, [adminUsers]);
 
   // Modals state
   const [activeSlidePresentation, setActiveSlidePresentation] = useState<Presentation | null>(null);
@@ -404,9 +466,33 @@ export default function App() {
     setOfflineCachedIds([]);
   };
 
-  // Add new presentation from Admin form
-  const handleAddNewPresentation = (newPres: Presentation) => {
+  // Add new presentation from Admin form / upload
+  const handleAddNewPresentation = async (newPres: Presentation) => {
     setPresentations((prev) => [newPres, ...prev]);
+    try {
+      await setDoc(doc(db, 'presentations', newPres.id), newPres);
+    } catch (e) {
+      console.error('Error saving presentation to firestore:', e);
+    }
+  };
+
+  const handleUpdatePresentation = async (updatedPresentation: Presentation) => {
+    setPresentations((prev) =>
+      prev.map((p) => (p.id === updatedPresentation.id ? updatedPresentation : p))
+    );
+    try {
+      await setDoc(doc(db, 'presentations', updatedPresentation.id), updatedPresentation);
+    } catch (e) {
+      console.error('Error updating presentation in firestore:', e);
+    }
+  };
+
+  const handleAddAdmin = (newAdmin: AdminUser) => {
+    setAdminUsers((prev) => [newAdmin, ...prev]);
+  };
+
+  const handleRemoveAdmin = (adminId: string) => {
+    setAdminUsers((prev) => prev.filter((a) => a.id !== adminId));
   };
 
   // Filtered presentations
@@ -476,8 +562,45 @@ export default function App() {
     return count;
   }, [presentations]);
 
+  if (!isLoggedIn && role !== 'admin') {
+    return (
+      <>
+        <LandingPage
+          lang={lang}
+          onLanguageToggle={() => setLang((prev) => (prev === 'en' ? 'fr' : 'en'))}
+          onOpenAuth={(mode) => {
+            setAuthMode(mode);
+            setIsAuthModalOpen(true);
+          }}
+          onContinueAsGuest={() => {
+            setIsLoggedIn(true);
+            localStorage.setItem('cme_is_logged_in', 'true');
+          }}
+        />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          initialMode={authMode}
+          lang={lang}
+          onClose={() => setIsAuthModalOpen(false)}
+          onSuccess={(updatedProfile) => {
+            setProfile(updatedProfile);
+            setIsLoggedIn(true);
+            setIsAuthModalOpen(false);
+            localStorage.setItem('cme_is_logged_in', 'true');
+          }}
+        />
+        <AdminLoginModal
+          isOpen={isAdminLoginOpen}
+          lang={lang}
+          onClose={() => setIsAdminLoginOpen(false)}
+          onLoginSuccess={handleAdminLoginSuccess}
+        />
+      </>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 flex flex-col selection:bg-blue-600 selection:text-white">
       {/* Header */}
       <Header
         lang={lang}
@@ -551,12 +674,17 @@ export default function App() {
               mpesaTransactions={mpesaTransactions}
               lang={lang}
               onAddNewPresentation={handleAddNewPresentation}
+              onUpdatePresentation={handleUpdatePresentation}
               onViewPresentation={(pres) => setActiveSlidePresentation(pres)}
               onLogout={handleAdminLogout}
               onViewCertificateForUser={(presentationId) => {
                 const pres = presentations.find((p) => p.id === presentationId);
                 if (pres) setActiveCertificatePresentation(pres);
               }}
+              adminUsers={adminUsers}
+              onAddAdmin={handleAddAdmin}
+              onRemoveAdmin={handleRemoveAdmin}
+              currentAdminEmail={localStorage.getItem('cme_admin_email') || 'tumutumuclinicmanager@gmail.com'}
             />
           )
         ) : (
@@ -1067,9 +1195,30 @@ export default function App() {
           onUpdateProfile={(updated) => setProfile(updated)}
           offlineCount={offlineCachedIds.length}
           onClearOfflineCache={handleClearOfflineCache}
+          onSignOut={() => {
+            setIsLoggedIn(false);
+            localStorage.removeItem('cme_is_logged_in');
+            setIsSettingsOpen(false);
+          }}
+          darkMode={darkMode}
+          onToggleDarkMode={() => setDarkMode((prev) => !prev)}
           onClose={() => setIsSettingsOpen(false)}
         />
       )}
+
+      {/* 7. Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        initialMode={authMode}
+        lang={lang}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={(updatedProfile) => {
+          setProfile(updatedProfile);
+          setIsLoggedIn(true);
+          setIsAuthModalOpen(false);
+          localStorage.setItem('cme_is_logged_in', 'true');
+        }}
+      />
     </div>
   );
 }

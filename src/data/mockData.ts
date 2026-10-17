@@ -1,4 +1,4 @@
-import { Presentation, MPesaPayment, UserProgress, UserProfile } from '../types';
+import { Presentation, MPesaPayment, UserProgress, UserProfile, AdminUser } from '../types';
 
 export const initialUserProfile: UserProfile = {
   id: 'usr-tumutumu-01',
@@ -1004,3 +1004,61 @@ export const initialMPesaTransactions: MPesaPayment[] = [
     merchantRequestId: 'MR-90299-TY9',
   },
 ];
+
+export const initialAdminUsers: AdminUser[] = [
+  {
+    id: 'adm-001',
+    email: 'tumutumuclinicmanager@gmail.com',
+    fullName: 'Dr. Bonny',
+    role: 'Super Admin',
+    institution: 'Tumutumu Mission Hospital & Medical Centre',
+    dateAdded: '2026-01-10',
+    addedBy: 'System Primary Authority',
+    status: 'ACTIVE',
+    permissions: [
+      'post_presentations',
+      'manage_admins',
+      'edit_presentations',
+      'manage_quizzes',
+      'issue_certificates',
+      'view_financials',
+    ],
+    temporaryPasscode: 'bonny@cme2026',
+  },
+  {
+    id: 'adm-002',
+    email: 'admin@cme-council.org',
+    fullName: 'Kenya Medical Council Board Admin',
+    role: 'Accreditation Auditor',
+    institution: 'Kenya Medical Practitioners & Dentists Council (KMPDC)',
+    dateAdded: '2026-02-01',
+    addedBy: 'Dr. Bonny',
+    status: 'ACTIVE',
+    permissions: [
+      'post_presentations',
+      'manage_admins',
+      'edit_presentations',
+      'manage_quizzes',
+      'issue_certificates',
+      'view_financials',
+    ],
+    temporaryPasscode: 'admin2026',
+  },
+  {
+    id: 'adm-003',
+    email: 's.kimani@knh-cme.ke',
+    fullName: 'Prof. Sarah Kimani, MD, FACC',
+    role: 'Clinical Faculty',
+    institution: 'Kenyatta National Hospital & Univ. of Nairobi',
+    dateAdded: '2026-05-14',
+    addedBy: 'Dr. Bonny',
+    status: 'ACTIVE',
+    permissions: [
+      'post_presentations',
+      'edit_presentations',
+      'manage_quizzes',
+    ],
+    temporaryPasscode: 'kimani2026',
+  },
+];
+

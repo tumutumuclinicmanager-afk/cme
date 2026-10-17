@@ -185,3 +185,24 @@ export interface GlobalAnalytics {
   totalRevenueKes: number;
   averageQuizScorePercent: number;
 }
+
+export type AdminRole =
+  | 'Super Admin'
+  | 'CME Director'
+  | 'Clinical Faculty'
+  | 'Curriculum Reviewer'
+  | 'Accreditation Auditor';
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  fullName: string;
+  role: AdminRole;
+  institution: string;
+  dateAdded: string;
+  addedBy: string;
+  status: 'ACTIVE' | 'INVITED' | 'SUSPENDED';
+  permissions: string[];
+  temporaryPasscode?: string;
+}
+

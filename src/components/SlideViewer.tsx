@@ -84,7 +84,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   const totalSlides = slides.length;
 
   // View state
-  const [viewMode, setViewMode] = useState<'scrollable' | 'slideshow'>('scrollable');
+  const [viewMode, setViewMode] = useState<'scrollable' | 'slideshow'>('slideshow');
   const [currentSlideIndex, setCurrentSlideIndex] = useState<number>(() => {
     if (initialSlideNumber && initialSlideNumber >= 1 && initialSlideNumber <= slides.length) {
       return initialSlideNumber - 1;

@@ -33,9 +33,13 @@ import {
   MedicalSpecialty,
   PresentationSlide,
   QuizQuestion,
+  AdminUser,
 } from '../types';
 import { getTranslation, specialtyTranslations } from '../translations';
 import { PptUploadSection } from './PptUploadSection';
+import { AdminTeamSection } from './AdminTeamSection';
+import { PresentationCreator } from './PresentationCreator';
+import { AttachImageModal } from './AttachImageModal';
 
 interface AdminAnalyticsProps {
   presentations: Presentation[];
@@ -43,8 +47,13 @@ interface AdminAnalyticsProps {
   mpesaTransactions: MPesaPayment[];
   lang: Language;
   onAddNewPresentation: (presentation: Presentation) => void;
+  onUpdatePresentation: (presentation: Presentation) => void;
   onViewPresentation: (presentation: Presentation) => void;
   onViewCertificateForUser: (presentationId: string) => void;
+  adminUsers: AdminUser[];
+  onAddAdmin: (newAdmin: AdminUser) => void;
+  onRemoveAdmin: (adminId: string) => void;
+  currentAdminEmail?: string;
   onLogout?: () => void;
 }
 
@@ -54,65 +63,21 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
   mpesaTransactions,
   lang,
   onAddNewPresentation,
+  onUpdatePresentation,
   onViewPresentation,
   onViewCertificateForUser,
+  adminUsers,
+  onAddAdmin,
+  onRemoveAdmin,
+  currentAdminEmail,
   onLogout,
 }) => {
   const t = getTranslation(lang);
-  const [activeTab, setActiveTab] = useState<'analytics' | 'upload-ppt' | 'post-module'>('analytics');
+  const [activeTab, setActiveTab] = useState<'analytics' | 'upload-ppt' | 'post-module' | 'admins'>('analytics');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedSpecialty, setSelectedSpecialty] = useState<string>('All');
-
-  // Form state for creating a new presentation
-  const [title, setTitle] = useState<string>('');
-  const [specialty, setSpecialty] = useState<MedicalSpecialty>('Cardiology');
-  const [facultyAuthor, setFacultyAuthor] = useState<string>('Dr. Bonny, MD, FCP');
-  const [institution, setInstitution] = useState<string>('National Postgraduate Medical College');
-  const [cmeCredits, setCmeCredits] = useState<number>(2.0);
-  const [estimatedMinutes, setEstimatedMinutes] = useState<number>(45);
-  const [summary, setSummary] = useState<string>('');
-  const [objectivesText, setObjectivesText] = useState<string>(
-    '1. Identify hallmark diagnostic features\n2. Administer evidence-based pharmacology\n3. Execute guideline-directed monitoring'
-  );
-  const [isFree, setIsFree] = useState<boolean>(false);
-  const [priceKes, setPriceKes] = useState<number>(500);
-
-  // Slides for new presentation
-  const [slideTitle, setSlideTitle] = useState<string>('Clinical Case Vignette & Pathophysiology');
-  const [slideBulletsText, setSlideBulletsText] = useState<string>(
-    'Initial presentation with acute symptom onset\nDiagnostic criteria and differential diagnoses\nImmediate stabilization protocol'
-  );
-  const [slideNotes, setSlideNotes] = useState<string>(
-    'Review the diagnostic thresholds and consider secondary clinical risk scores.'
-  );
-  const [slideTakeaway, setSlideTakeaway] = useState<string>(
-    'Early identification reduces 30-day mortality.'
-  );
-  const [slideVideoUrl, setSlideVideoUrl] = useState<string>(
-    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
-  );
-  const [slideImageUrl, setSlideImageUrl] = useState<string>(
-    'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80'
-  );
-  const [imageModality, setImageModality] = useState<
-    'X-Ray' | 'CT Scan' | 'MRI' | 'Ultrasound' | 'Histology' | 'ECG' | 'Clinical Photo'
-  >('CT Scan');
-
-  // Quiz question for new presentation
-  const [quizVignette, setQuizVignette] = useState<string>(
-    'A 52-year-old patient presents with acute diagnostic signs. Which of the following is the guideline-recommended first-line pharmacotherapy?'
-  );
-  const [optionA, setOptionA] = useState<string>('First-line evidence-based pharmacotherapy');
-  const [optionB, setOptionB] = useState<string>('Placebo observation');
-  const [optionC, setOptionC] = useState<string>('Delayed surgery');
-  const [optionD, setOptionD] = useState<string>('Broad-spectrum non-indicated therapy');
-  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number>(0);
-  const [quizRationale, setQuizRationale] = useState<string>(
-    'Current international guidelines strongly recommend prompt initiation of targeted first-line therapy to optimize clinical recovery.'
-  );
-  const [referenceGuideline, setReferenceGuideline] = useState<string>(
-    'International Clinical Practice Guidelines 2026'
-  );
+  const [isAttachImageModalOpen, setIsAttachImageModalOpen] = useState<boolean>(false);
+  const [selectedTargetPresId, setSelectedTargetPresId] = useState<string>('');
 
   // Compute Analytics Metrics
   const totalCompletedModules = userProgressList.filter((p) => p.isSlideDeckCompleted).length;
@@ -138,72 +103,6 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
             userProgressList.filter((p) => p.quizAttempt).length
         )
       : 88;
-
-  const handleCreatePresentation = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title) return;
-
-    const newSlide: PresentationSlide = {
-      id: `slide-${Date.now()}-1`,
-      slideNumber: 1,
-      title: slideTitle,
-      contentBullets: slideBulletsText.split('\n').filter((b) => b.trim().length > 0),
-      speakerNotes: slideNotes,
-      clinicalTakeaway: slideTakeaway,
-      videoUrl: slideVideoUrl || undefined,
-      videoTitle: slideVideoUrl ? 'Clinical Demonstration' : undefined,
-      imageUrl: slideImageUrl || undefined,
-      imageDetails: slideImageUrl
-        ? {
-            url: slideImageUrl,
-            caption: `${imageModality} Diagnostic Evaluation`,
-            modality: imageModality,
-            annotations: [
-              {
-                id: 'anno-1',
-                xPercent: 50,
-                yPercent: 50,
-                label: 'Pathological Feature',
-                description: 'Key diagnostic finding relevant to the module presentation.',
-              },
-            ],
-          }
-        : undefined,
-    };
-
-    const newQuiz: QuizQuestion = {
-      id: `quiz-${Date.now()}-1`,
-      vignette: quizVignette,
-      options: [optionA, optionB, optionC, optionD],
-      correctAnswerIndex: correctAnswerIndex,
-      rationale: quizRationale,
-      referenceGuideline: referenceGuideline,
-    };
-
-    const newPresentation: Presentation = {
-      id: `cme-custom-${Date.now()}`,
-      title: title,
-      specialty: specialty,
-      cmeCredits: Number(cmeCredits),
-      estimatedMinutes: Number(estimatedMinutes),
-      facultyAuthor: facultyAuthor,
-      institution: institution,
-      summary: summary || title,
-      learningObjectives: objectivesText.split('\n').filter((o) => o.trim().length > 0),
-      slides: [newSlide],
-      quiz: [newQuiz],
-      isFree: isFree,
-      priceKes: isFree ? 0 : Number(priceKes),
-      publishedDate: new Date().toISOString().split('T')[0],
-      thumbnailUrl:
-        slideImageUrl ||
-        'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
-      level: 'Advanced',
-    };
-
-    onAddNewPresentation(newPresentation);
-    setActiveTab('analytics');
-  };
 
   return (
     <div id="admin-analytics-view" className="space-y-6">
@@ -259,6 +158,25 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
             >
               <Plus className="w-3.5 h-3.5" />
               <span>{t.postPresentation}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('admins')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                activeTab === 'admins'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+              <span>{lang === 'fr' ? 'Équipe Admins' : 'Admin Team & Roles'}</span>
+              <span
+                className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono font-bold ${
+                  activeTab === 'admins' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                {adminUsers.length}
+              </span>
             </button>
           </div>
 
@@ -356,14 +274,33 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedTargetPresId(presentations[0]?.id || '');
+                    setIsAttachImageModalOpen(true);
+                  }}
+                  className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                >
+                  <Image className="w-4 h-4" />
+                  <span>{lang === 'fr' ? '+ Ajouter Cliché' : '+ Attach Clinical Image'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('post-module')}
+                  className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>{lang === 'fr' ? 'Nouveau Module' : 'Post Presentation'}</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('upload-ppt')}
                   className="px-3.5 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
                 >
                   <FolderUp className="w-4 h-4" />
-                  <span>{lang === 'fr' ? 'Importer PPT / WPS' : 'Upload PowerPoint (MS & WPS)'}</span>
+                  <span>{lang === 'fr' ? 'Importer PPT / WPS' : 'Upload PowerPoint'}</span>
                 </button>
               </div>
             </div>
@@ -431,14 +368,28 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => onViewPresentation(pres)}
-                            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200 transition-colors inline-flex items-center gap-1"
-                          >
-                            <Eye className="w-3 h-3 text-blue-600" />
-                            <span>{lang === 'fr' ? 'Consulter' : 'Preview'}</span>
-                          </button>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedTargetPresId(pres.id);
+                                setIsAttachImageModalOpen(true);
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200 transition-colors inline-flex items-center gap-1"
+                              title="Attach diagnostic imaging scan or add image slide"
+                            >
+                              <Image className="w-3 h-3 text-emerald-600" />
+                              <span>{lang === 'fr' ? '+ Cliché' : '+ Image'}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => onViewPresentation(pres)}
+                              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200 transition-colors inline-flex items-center gap-1"
+                            >
+                              <Eye className="w-3 h-3 text-blue-600" />
+                              <span>{lang === 'fr' ? 'Consulter' : 'Preview'}</span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -703,14 +654,18 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
           onViewPresentation={onViewPresentation}
           onCancel={() => setActiveTab('analytics')}
         />
+      ) : activeTab === 'admins' ? (
+        <AdminTeamSection
+          adminUsers={adminUsers}
+          onAddAdmin={onAddAdmin}
+          onRemoveAdmin={onRemoveAdmin}
+          lang={lang}
+          currentAdminEmail={currentAdminEmail}
+        />
       ) : (
-        /* POST NEW PRESENTATION FORM */
-        <form
-          onSubmit={handleCreatePresentation}
-          className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6 text-slate-700 text-xs sm:text-sm"
-        >
-          {/* Quick Banner: Want to import PPT instead? */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        /* Multi-Slide Presentation & Media Creator */
+        <div className="space-y-4">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
                 P
@@ -718,13 +673,13 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
               <div className="text-xs">
                 <span className="font-bold text-slate-900 block">
                   {lang === 'fr'
-                    ? 'Vous avez un fichier PowerPoint ou WPS prêt ?'
-                    : 'Have an existing Microsoft PowerPoint or WPS slide deck?'}
+                    ? 'Vous avez un fichier PowerPoint ou WPS (.pptx / .ppt) ?'
+                    : 'Have an existing Microsoft PowerPoint (.pptx) or WPS presentation?'}
                 </span>
                 <span className="text-slate-600">
                   {lang === 'fr'
-                    ? 'Importez directement votre fichier .pptx ou .ppt pour convertir vos diapositives et notes en 1 clic.'
-                    : 'Upload your .pptx or .ppt file directly to auto-extract slides, speaker notes, and clinical graphics.'}
+                    ? 'Importez directement votre fichier pour convertir automatiquement vos diapositives, graphiques et notes.'
+                    : 'Upload your file directly to auto-extract slides, speaker notes, and clinical graphics.'}
                 </span>
               </div>
             </div>
@@ -734,403 +689,32 @@ export const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({
               className="px-3.5 py-1.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-xs transition-colors shrink-0 flex items-center gap-1.5"
             >
               <FolderUp className="w-3.5 h-3.5" />
-              <span>{lang === 'fr' ? 'Importer Présentation PPT' : 'Switch to PPT Upload'}</span>
+              <span>{lang === 'fr' ? 'Importer PPT / WPS' : 'Switch to PPT Upload'}</span>
             </button>
           </div>
 
-          <div className="border-b border-slate-200 pb-3">
-            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-blue-600" />
-              {t.createModuleTitle}
-            </h3>
-            <p className="text-xs text-slate-500">
-              {lang === 'fr'
-                ? 'Créez un support de formation avec diapositives, démonstration vidéo, imagerie haute résolution et quiz interactif.'
-                : 'Publish medical PowerPoint resources with slides, video demo, high-res imaging viewer, and interactive evaluation quiz.'}
-            </p>
-          </div>
-
-          {/* Core Info */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {t.titleField} *
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Acute Stroke Management & Endovascular Thrombectomy"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {t.specialtyField}
-              </label>
-              <select
-                value={specialty}
-                onChange={(e) => setSpecialty(e.target.value as MedicalSpecialty)}
-                className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {Object.keys(specialtyTranslations).map((spec) => (
-                  <option key={spec} value={spec}>
-                    {specialtyTranslations[spec as MedicalSpecialty][lang]}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {t.facultyField}
-              </label>
-              <input
-                type="text"
-                value={facultyAuthor}
-                onChange={(e) => setFacultyAuthor(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {t.institutionField}
-              </label>
-              <input
-                type="text"
-                value={institution}
-                onChange={(e) => setInstitution(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {t.creditsField}
-                </label>
-                <input
-                  type="number"
-                  step="0.5"
-                  min="0.5"
-                  max="10"
-                  value={cmeCredits}
-                  onChange={(e) => setCmeCredits(parseFloat(e.target.value))}
-                  className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  {t.estimatedMinutesField}
-                </label>
-                <input
-                  type="number"
-                  min="10"
-                  step="5"
-                  value={estimatedMinutes}
-                  onChange={(e) => setEstimatedMinutes(parseInt(e.target.value, 10))}
-                  className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {t.summaryField}
-              </label>
-              <textarea
-                rows={2}
-                placeholder="Clinical synopsis and relevance for practicing clinicians..."
-                value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                {t.objectivesField}
-              </label>
-              <textarea
-                rows={3}
-                value={objectivesText}
-                onChange={(e) => setObjectivesText(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
-              />
-            </div>
-          </div>
-
-          {/* Pricing Tier */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-            <h4 className="font-bold text-xs uppercase tracking-wider text-blue-700">
-              {t.pricingField}
-            </h4>
-            <div className="flex flex-wrap items-center gap-6">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="pricing"
-                  checked={isFree}
-                  onChange={() => setIsFree(true)}
-                  className="text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-slate-800 font-medium">{t.priceFree}</span>
-              </label>
-
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="pricing"
-                  checked={!isFree}
-                  onChange={() => setIsFree(false)}
-                  className="text-blue-600 focus:ring-blue-500"
-                />
-                <span className="text-slate-800 font-medium">{t.pricePaid}</span>
-              </label>
-
-              {!isFree && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-slate-500">{t.priceAmountKes}:</span>
-                  <input
-                    type="number"
-                    step="50"
-                    min="100"
-                    value={priceKes}
-                    onChange={(e) => setPriceKes(parseInt(e.target.value, 10))}
-                    className="w-28 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-900 font-mono font-bold text-xs focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Slide 1 Content */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-            <h4 className="font-bold text-xs uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
-              <BookOpen className="w-3.5 h-3.5" />
-              {t.slidesHeader} (Slide 1)
-            </h4>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  {t.slideTitle}
-                </label>
-                <input
-                  type="text"
-                  value={slideTitle}
-                  onChange={(e) => setSlideTitle(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  {t.slideBullets}
-                </label>
-                <textarea
-                  rows={3}
-                  value={slideBulletsText}
-                  onChange={(e) => setSlideBulletsText(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm font-mono focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  {t.slideNotes}
-                </label>
-                <textarea
-                  rows={2}
-                  value={slideNotes}
-                  onChange={(e) => setSlideNotes(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  {t.slideTakeaway}
-                </label>
-                <textarea
-                  rows={2}
-                  value={slideTakeaway}
-                  onChange={(e) => setSlideTakeaway(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* Video URL */}
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-slate-700 mb-1 flex items-center gap-1.5">
-                  <Video className="w-3.5 h-3.5 text-blue-600" />
-                  {t.videoUrlField}
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://.../clinical-demo.mp4"
-                  value={slideVideoUrl}
-                  onChange={(e) => setSlideVideoUrl(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {/* High-Res Imaging */}
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1 flex items-center gap-1.5">
-                  <Image className="w-3.5 h-3.5 text-blue-600" />
-                  {t.imageUrlField}
-                </label>
-                <input
-                  type="url"
-                  value={slideImageUrl}
-                  onChange={(e) => setSlideImageUrl(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 font-mono text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  {t.imageModalityField}
-                </label>
-                <select
-                  value={imageModality}
-                  onChange={(e) =>
-                    setImageModality(
-                      e.target.value as
-                        | 'X-Ray'
-                        | 'CT Scan'
-                        | 'MRI'
-                        | 'Ultrasound'
-                        | 'Histology'
-                        | 'ECG'
-                        | 'Clinical Photo'
-                    )
-                  }
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="CT Scan">CT Scan</option>
-                  <option value="MRI">MRI</option>
-                  <option value="X-Ray">X-Ray</option>
-                  <option value="Ultrasound">Ultrasound</option>
-                  <option value="Histology">Histology</option>
-                  <option value="ECG">ECG</option>
-                  <option value="Clinical Photo">Clinical Photo</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Quiz Question 1 */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-            <h4 className="font-bold text-xs uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
-              <Award className="w-3.5 h-3.5" />
-              {t.quizHeader} (Question 1)
-            </h4>
-
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
-                {t.vignetteField}
-              </label>
-              <textarea
-                rows={2}
-                value={quizVignette}
-                onChange={(e) => setQuizVignette(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div>
-                <label className="block text-[11px] text-slate-500 mb-0.5">Option A</label>
-                <input
-                  type="text"
-                  value={optionA}
-                  onChange={(e) => setOptionA(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-slate-500 mb-0.5">Option B</label>
-                <input
-                  type="text"
-                  value={optionB}
-                  onChange={(e) => setOptionB(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-slate-500 mb-0.5">Option C</label>
-                <input
-                  type="text"
-                  value={optionC}
-                  onChange={(e) => setOptionC(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] text-slate-500 mb-0.5">Option D</label>
-                <input
-                  type="text"
-                  value={optionD}
-                  onChange={(e) => setOptionD(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-              <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  {t.correctIndexField}
-                </label>
-                <select
-                  value={correctAnswerIndex}
-                  onChange={(e) => setCorrectAnswerIndex(parseInt(e.target.value, 10))}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-blue-700 text-xs font-bold focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value={0}>Option A</option>
-                  <option value={1}>Option B</option>
-                  <option value={2}>Option C</option>
-                  <option value={3}>Option D</option>
-                </select>
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-slate-700 mb-1">
-                  {t.rationaleField}
-                </label>
-                <input
-                  type="text"
-                  value={quizRationale}
-                  onChange={(e) => setQuizRationale(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-3 pt-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab('analytics')}
-              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
-            >
-              {t.cancel}
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs transition-transform active:scale-98 flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>{t.savePresentation}</span>
-            </button>
-          </div>
-        </form>
+          <PresentationCreator
+            lang={lang}
+            onSavePresentation={(newPres) => {
+              onAddNewPresentation(newPres);
+              setActiveTab('analytics');
+            }}
+            onCancel={() => setActiveTab('analytics')}
+          />
+        </div>
       )}
+
+      {/* Attach Clinical Image / Diagnostic Scan Modal */}
+      <AttachImageModal
+        isOpen={isAttachImageModalOpen}
+        onClose={() => setIsAttachImageModalOpen(false)}
+        presentations={presentations}
+        targetPresentationId={selectedTargetPresId}
+        onSaveUpdatedPresentation={(updated) => {
+          onUpdatePresentation(updated);
+        }}
+        lang={lang}
+      />
     </div>
   );
 };

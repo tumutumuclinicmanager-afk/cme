@@ -50,8 +50,8 @@ export const CertificateModal: React.FC<CertificateModalProps> = ({
 KMPDC ACCREDITED CONTINUING MEDICAL EDUCATION (CME)
 ==================================================
 Certificate ID: ${certificateId}
-Issued To: ${profile.name} (${profile.cadre}, Reg: ${profile.licenseNumber})
-Institution: ${profile.institution}
+Issued To: ${profile.name} (${profile.title}, Reg: ${profile.medicalLicenseNumber})
+Institution: ${profile.hospitalAffiliation}
 Presentation: ${presentation.title}
 Specialty: ${presentation.specialty}
 Credits Awarded: ${presentation.cmeCredits} CPD Units
